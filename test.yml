@@ -1,0 +1,90 @@
+- hosts: all
+  tasks:
+  check_mode: no
+  - name: Commands checking
+    command: uname
+    register: output
+      - debug:
+        msg: "{{output}}"
+	command: hostname
+	register: output
+	  - debug:
+	    msg: "{{output}}"
+
+  
+  
+ansible_all_ipv4_addresses
+ansible_architecture
+
+
+
+ - name: Touch the same file, but add/remove some permissions
+      file:
+         path: /var/www/html/index1.html
+         state: touch
+         mode: 0777
+         content: |
+          <html>
+             <h>This is my first HTML file</h>
+          </html>
+		  
+		  
+	---
+	- hosts: ansiblenode2-redhat
+	  tasks:
+	  - name: Gather Version
+		debug:
+		 msg: "The server Operating system is {{ ansible_distribution }} {{ ansible_distribution_major_version }}"
+	  - name: Write  Version
+		local_action: shell echo "This is  {{ ansible_distribution }} {{ ansible_distribution_major_version }}" >> /tmp/output
+
+
+
+- name: Run expect to wait for a successful PXE boot via out-of-band CIMC
+  shell: |
+    set timeout 300
+    spawn ssh admin@{{ cimc_host }}
+
+    expect "password:"
+    send "{{ cimc_password }}\n"
+
+    expect "\n{{ cimc_name }}"
+    send "connect host\n"
+
+    expect "pxeboot.n12"
+    send "\n"
+
+    exit 0
+  args:
+    executable: /usr/bin/expect
+  delegate_to: localhost
+
+---
+- hosts: all
+  gather_facts: yes
+  become: false
+  tasks:
+    - name: system information
+#      copy:
+#        content: "{{ ansible_hostname }} \n {{ansible_processor_count}} \n {{ansible_default_ipv4.address}} \n {{ansible_default_ipv4.macaddress}}\n {{ ansible_processor_cores }}\n {{ansible_distribution_version}}\n {{ansible_distribution_version}}\n {{ansible_distribution_release}}"
+        debug: msg= "{{ ansible_distribution }}"
+
+---
+
+- hosts: ansiblenode1
+#  remote_user: ansible
+#  become: true
+#  become_method: sudo
+
+  tasks:
+   - name: UnInstallaing packages
+     yum:
+       name: httpd
+       state: absent
+
+ #   - name: creating directory
+ #     file:
+ #       path: /home/ansible/dev/project
+ #       state: directory
+ #       mode: '0755'
+~

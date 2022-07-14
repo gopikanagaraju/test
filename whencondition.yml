@@ -1,0 +1,18 @@
+[ansible@ansibleserver dev]$ cat when.yml
+---
+- hosts: all
+  tasks:
+  - name: 'System OS details'
+    debug:
+      msg: OS version = {{ ansible_distribution }}
+  - name: Installing https
+    yum:
+      name: httpd
+      state: latest
+    when: ansible_distribution != "Debian"
+  - name: creating directory
+    file:
+       path: /home/ansible/dev/project1
+       state: directory
+       mode: '0755'
+    when: ansible_distribution == "RedHat
